@@ -269,10 +269,8 @@ public class ListTesting {
                     timeTest += System.currentTimeMillis() - startTime;
                     break;
             }
-            System.out.println(i+"  ---->   "+timeTest);
         }
         methodName = "iterator.remove";
-        System.out.println(methodName);
         testResult = (int) timeTest / 100;
     }
 }
