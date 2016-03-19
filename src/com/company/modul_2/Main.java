@@ -2,7 +2,6 @@ package com.company.modul_2;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by sigmund69 on 18.03.2016.
@@ -62,6 +61,7 @@ class ImplementExecutor implements Executor {
     public void execute() {
         execution(validResults);
         execution(invalidResults);
+        isExecuteIsRun = true;
     }
 
     @Override
@@ -101,6 +101,7 @@ class ImplementExecutor implements Executor {
             System.out.println("[Error]: This Task hasn't been executed!");
         }
     }
+
 }
 
 interface Task<T> {
@@ -118,24 +119,20 @@ class ImplementTask implements Task {
     private String surname;
     private boolean executeIsRun = false;
 
+    ImplementTask (String name, String surname){
+        this.name = name;
+        this.surname = surname;
+    }
+
     @Override
     public void execute() {
-        input();
+        System.out.println("Information saved!");
         executeIsRun = true;
     }
 
     @Override
     public Object getResult() {
         return this;
-    }
-
-    private void input() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please, input the name:");
-        name = scanner.nextLine();
-        System.out.println("Please, input the surname:");
-        surname = scanner.nextLine();
-        System.out.println("Information saved!");
     }
 
     public String getName() {
@@ -148,6 +145,15 @@ class ImplementTask implements Task {
 
     public boolean isExecuteIsRun() {
         return executeIsRun;
+    }
+
+    @Override
+    public String toString() {
+        return "ImplementTask{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", executeIsRun=" + executeIsRun +
+                '}';
     }
 }
 
