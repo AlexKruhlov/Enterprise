@@ -20,15 +20,15 @@ public class ImplementExecutorTest {
         executorActual.addTask(task2);
         executorActual.execute();
 
-        List<Task> validExpectedList = new ArrayList<>();
-        Task<ImplementTask> taskExpVal = new ImplementTask("Alex", "Krug");
+        List<ResultNameSurname> validExpectedList = new ArrayList<>();
+        ImplementTask taskExpVal = new ImplementTask("Alex", "Krug");
         taskExpVal.execute();
-        validExpectedList.add(taskExpVal);
+        validExpectedList.add(taskExpVal.getResult());
 
-        List<Task> invalidExpectedList = new ArrayList<>();
-        Task<ImplementTask> taskExpInval = new ImplementTask(" ", "Vag");
+        List<ResultNameSurname> invalidExpectedList = new ArrayList<>();
+        ImplementTask taskExpInval = new ImplementTask(" ", "Vag");
         taskExpInval.execute();
-        invalidExpectedList.add(taskExpInval);
+        invalidExpectedList.add(taskExpInval.getResult());
 
         assertEquals(validExpectedList.toString(), executorActual.getValidResults().toString());
         assertEquals(invalidExpectedList.toString(), executorActual.getInvalidResults().toString());

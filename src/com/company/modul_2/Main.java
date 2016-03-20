@@ -7,16 +7,16 @@ import java.util.List;
  * Created by sigmund69 on 18.03.2016.
  */
 
-interface Executor<T, V> {
+interface Executor<T extends Task, V extends Validator> {
 
     // Добавить таск на выполнение. Результат таска будет доступен через метод getValidResults().
     // Бросает Эксепшн если уже был вызван метод execute()
-    void addTask(Task<T> tas);
+    void addTask(T task);
 
     // Добавить таск на выполнение и валидатор результата. Результат таска будет записан в ValidResults если validator.isValid вернет true для этого результата
     // Результат таска будет записан в InvalidResults если validator.isValid вернет false для этого результата
     // Бросает Эксепшн если уже был вызван метод execute()
-    void addTask(Task<T> task, Validator<V> validator);
+    void addTask(T task, V validator);
 
     // Выполнить все добавленые таски
     void execute();
@@ -28,14 +28,14 @@ interface Executor<T, V> {
     List getInvalidResults();
 }
 
-class ImplementExecutor implements Executor {
+class ImplementExecutor implements Executor<ImplementTask, ImplementValidator> {
     boolean isExecuteIsRun;
-    private List<Task> tasks = new ArrayList<>();
-    private List<Task> validResults = new ArrayList<>();
-    private List<Task> invalidResults = new ArrayList<>();
+    private List<ImplementTask> tasks = new ArrayList<>();
+    private List<ResultNameSurname> validResults = new ArrayList<>();
+    private List<ResultNameSurname> invalidResults = new ArrayList<>();
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(ImplementTask task) {
         try {
             if (isExecuteIsRun) {
                 throw new Exception();
@@ -48,21 +48,20 @@ class ImplementExecutor implements Executor {
     }
 
     @Override
-    public void addTask(Task task, Validator validator) {
+    public void addTask(ImplementTask task, ImplementValidator validator) {
         checkIsExecuteIsRun();
         if (validator.isValid(task)) {
-            validResults.add(task);
+            validResults.add(task.getResult());
         } else {
-            invalidResults.add(task);
+            invalidResults.add(task.getResult());
         }
     }
 
     @Override
     public void execute() {
-        Validator validator = new ImplementValidator();
         for (int i = 0; i < tasks.size(); i++) {
             tasks.get(i).execute();
-            addTask(tasks.get(i), validator);
+            addTask(tasks.get(i), new ImplementValidator());
         }
         isExecuteIsRun = true;
     }
@@ -114,6 +113,7 @@ interface Task<T> {
 class ImplementTask implements Task {
     private String name;
     private String surname;
+    private ResultNameSurname result = new ResultNameSurname();
     private boolean executeIsRun = false;
 
     ImplementTask(String name, String surname) {
@@ -123,13 +123,15 @@ class ImplementTask implements Task {
 
     @Override
     public void execute() {
+        result.setName(name);
+        result.setSurname(surname);
         System.out.println("Information saved!");
         executeIsRun = true;
     }
 
     @Override
-    public Object getResult() {
-        return this;
+    public ResultNameSurname getResult() {
+        return result;
     }
 
     public String getName() {
@@ -144,12 +146,33 @@ class ImplementTask implements Task {
         return executeIsRun;
     }
 
+}
+
+class ResultNameSurname {
+    private String name;
+    private String surname;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
     @Override
     public String toString() {
-        return "ImplementTask{" +
+        return "ResultNameSurname{" +
                 "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", executeIsRun=" + executeIsRun +
                 '}';
     }
 }
