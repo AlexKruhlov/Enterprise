@@ -7,17 +7,16 @@ import java.util.List;
  * Created by sigmund69 on 18.03.2016.
  */
 
-
-interface Executor {
+interface Executor<T, V> {
 
     // Добавить таск на выполнение. Результат таска будет доступен через метод getValidResults().
     // Бросает Эксепшн если уже был вызван метод execute()
-    void addTask(Task task);
+    void addTask(Task<T> tas);
 
     // Добавить таск на выполнение и валидатор результата. Результат таска будет записан в ValidResults если validator.isValid вернет true для этого результата
     // Результат таска будет записан в InvalidResults если validator.isValid вернет false для этого результата
     // Бросает Эксепшн если уже был вызван метод execute()
-    void addTask(Task task, Validator validator);
+    void addTask(Task<T> task, Validator<V> validator);
 
     // Выполнить все добавленые таски
     void execute();
@@ -31,6 +30,7 @@ interface Executor {
 
 class ImplementExecutor implements Executor {
     boolean isExecuteIsRun;
+    private List<Task> tasks = new ArrayList<>();
     private List<Task> validResults = new ArrayList<>();
     private List<Task> invalidResults = new ArrayList<>();
 
@@ -40,7 +40,7 @@ class ImplementExecutor implements Executor {
             if (isExecuteIsRun) {
                 throw new Exception();
             } else {
-                validResults.add(task);
+                tasks.add(task);
             }
         } catch (Exception e) {
             System.out.println("[Error]: This Task has been executed!");
@@ -59,8 +59,11 @@ class ImplementExecutor implements Executor {
 
     @Override
     public void execute() {
-        execution(validResults);
-        execution(invalidResults);
+        Validator validator = new ImplementValidator();
+        for (int i = 0; i < tasks.size(); i++) {
+            tasks.get(i).execute();
+            addTask(tasks.get(i), validator);
+        }
         isExecuteIsRun = true;
     }
 
@@ -74,12 +77,6 @@ class ImplementExecutor implements Executor {
     public List getInvalidResults() {
         checkIsExecuteIsNotRun();
         return invalidResults;
-    }
-
-    public void execution(List<Task> task) {
-        for (int i = 0; i < task.size(); i++) {
-            task.get(i).execute();
-        }
     }
 
     public void checkIsExecuteIsRun() {
@@ -119,7 +116,7 @@ class ImplementTask implements Task {
     private String surname;
     private boolean executeIsRun = false;
 
-    ImplementTask (String name, String surname){
+    ImplementTask(String name, String surname) {
         this.name = name;
         this.surname = surname;
     }
@@ -163,7 +160,6 @@ interface Validator<T> {
 }
 
 class ImplementValidator implements Validator<ImplementTask> {
-
     public boolean isValid(ImplementTask result) {
         if ((result.getName() != null && result.getName() != "" && result.getName().charAt(0) != ' ') &&
                 result.getSurname() != null && result.getSurname() != "" && result.getSurname().charAt(0) != ' ') {
@@ -172,7 +168,6 @@ class ImplementValidator implements Validator<ImplementTask> {
             return false;
         }
     }
-
 }
 
 

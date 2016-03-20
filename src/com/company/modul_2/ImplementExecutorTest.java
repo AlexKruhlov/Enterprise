@@ -14,11 +14,10 @@ public class ImplementExecutorTest {
     @Test
     public void mainTest() {
         Executor executorActual = new ImplementExecutor();
-        Validator validator = new ImplementValidator();
         Task<ImplementTask> task1 = new ImplementTask("Alex", "Krug");
         Task<ImplementTask> task2 = new ImplementTask(" ", "Vag");
-        executorActual.addTask(task1, validator);
-        executorActual.addTask(task2, validator);
+        executorActual.addTask(task1);
+        executorActual.addTask(task2);
         executorActual.execute();
 
         List<Task> validExpectedList = new ArrayList<>();
