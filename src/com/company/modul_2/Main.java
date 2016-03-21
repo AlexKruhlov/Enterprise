@@ -7,16 +7,16 @@ import java.util.List;
  * Created by sigmund69 on 18.03.2016.
  */
 
-interface Executor<T extends Task, V extends Validator> {
+interface Executor<T, V> {
 
     // Добавить таск на выполнение. Результат таска будет доступен через метод getValidResults().
     // Бросает Эксепшн если уже был вызван метод execute()
-    void addTask(T task);
+    void addTask(Task<? extends T> task);
 
     // Добавить таск на выполнение и валидатор результата. Результат таска будет записан в ValidResults если validator.isValid вернет true для этого результата
     // Результат таска будет записан в InvalidResults если validator.isValid вернет false для этого результата
     // Бросает Эксепшн если уже был вызван метод execute()
-    void addTask(T task, V validator);
+    void addTask(Task<? extends T> task, Validator<? extends V> validator);
 
     // Выполнить все добавленые таски
     void execute();
@@ -28,14 +28,14 @@ interface Executor<T extends Task, V extends Validator> {
     List getInvalidResults();
 }
 
-class ImplementExecutor implements Executor<ImplementTask, ImplementValidator> {
+class ImplementExecutor implements Executor {
     boolean isExecuteIsRun;
-    private List<ImplementTask> tasks = new ArrayList<>();
-    private List<ResultNameSurname> validResults = new ArrayList<>();
-    private List<ResultNameSurname> invalidResults = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
+    private List validResults = new ArrayList<>();
+    private List invalidResults = new ArrayList<>();
 
     @Override
-    public void addTask(ImplementTask task) {
+    public void addTask(Task task) {
         try {
             if (isExecuteIsRun) {
                 throw new Exception();
@@ -48,7 +48,7 @@ class ImplementExecutor implements Executor<ImplementTask, ImplementValidator> {
     }
 
     @Override
-    public void addTask(ImplementTask task, ImplementValidator validator) {
+    public void addTask(Task task, Validator validator) {
         checkIsExecuteIsRun();
         if (validator.isValid(task)) {
             validResults.add(task.getResult());
@@ -97,10 +97,10 @@ class ImplementExecutor implements Executor<ImplementTask, ImplementValidator> {
             System.out.println("[Error]: This Task hasn't been executed!");
         }
     }
-
 }
 
-interface Task<T> {
+
+interface Task <T> {
 
     // Метода запускает таск на выполнение
     void execute();
